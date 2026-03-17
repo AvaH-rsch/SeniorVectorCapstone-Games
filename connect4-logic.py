@@ -67,7 +67,9 @@ while not game_over:
               board[row+3][col-3] == 1):
                 game_over = True
     
-    # make the turn 2
+     if game_over:
+        print("Player 1 wins!")
+        break
     
 # ask for player 2 input 
   if turn == 2:
@@ -119,5 +121,9 @@ while not game_over:
               board[row+2][col-2] == 2 and
               board[row+3][col-3] == 2):
                 game_over = True
+
+        if game_over:
+          print("Player 2 wins!")
+          break
   
  
