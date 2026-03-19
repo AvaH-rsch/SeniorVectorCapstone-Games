@@ -67,7 +67,7 @@ while not game_over:
               board[row+3][col-3] == 1):
                 game_over = True
     
-     if game_over:
+      if game_over:
         print("Player 1 wins!")
         break
     
