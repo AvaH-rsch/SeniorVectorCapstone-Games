@@ -1,33 +1,34 @@
 
-# the 6X7 board can be looked at as a matrix 
-
 import numpy as np
 
-# creating the board for the game 
+# Creating the 6x7 board for the game 
 def create_board():
   board = np.zeros((6,7))
   return board
 
 board = create_board()
-# the game will begin with the game_over being false 
+
+# The game will begin with the game_over being false 
 game_over = False
 
-#to diferentiate whose turn it is
+# When turn = 1 it's player 1 turn
 turn = 1
 
+# Function that returns a boolean based on wheather the impoted column is valid
 def is_valid(column):
    if column <= 7 :
       return True
    else:
       return False
-
+     
+# Function that moves the piece to the first avaliable spot in the indicated column
 def moving_pieces(colums, player) :
    for row in range(board.shape[0] - 1, -1, -1):   # go through each row
       if board[row][colums] == 0:     # check if the value is 0
           board[row][colums] = player      # replace it with 1
           break 
       
-
+# Function that checks if someone has won the game
 def check_win(player):
    game_over = False
    for row in range(board.shape[0]):          # go through each row
@@ -72,14 +73,12 @@ def check_win(player):
    else:
       return False
 
+# ==========================================
+# 🎮 START OF CONNECT FOUR GAME LOGIC 🎮
+# ==========================================
 
-
-
-
-# dynamics of the game 
 while game_over == False:
-  # ask for player 1 input
-  if turn == 1:
+    if turn == 1:
     selected_column = int(input("Player 1, choose a column (0-6): ")) - 1 # takes in the answer from the player and converts it to a number
 
     is_valid(selected_column)
@@ -90,22 +89,19 @@ while game_over == False:
         print(row)
     
     turn = 2
-
-    
+  
     game_over = check_win(1) 
     
     if game_over:
         print("Player 1 wins!")
         break
     
-# ask for player 2 input 
+# Player 2 Input 
   if turn == 2:
     selected_column_second = int(input("Player 2, choose a column (0-6): ")) - 1
 
-   # is it valid
     is_valid(selected_column_second)
     
-    # move the piece 
     moving_pieces(selected_column_second, 2)
 
     for row in board:
