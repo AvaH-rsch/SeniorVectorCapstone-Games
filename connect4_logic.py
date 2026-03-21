@@ -21,12 +21,14 @@ def is_valid(column):
    else:
       return False
      
-# Function that moves the piece to the first avaliable spot in the indicated column
-def moving_pieces(colums, player) :
+# Function that moves the piece to the first available spot in the indicated column
+# Returns True if the piece was placed, False if the column was full
+def moving_pieces(colums, player):
    for row in range(board.shape[0] - 1, -1, -1):   # go through each row
       if board[row][colums] == 0:     # check if the value is 0
-          board[row][colums] = player      # replace it with 1
-          break 
+          board[row][colums] = player      # place piece
+          return True
+   return False
       
 # Function that checks if someone has won the game
 def check_win(player):
@@ -76,44 +78,44 @@ def check_win(player):
 # ==========================================
 # 🎮 START OF CONNECT FOUR GAME LOGIC 🎮
 # ==========================================
+# if __name__ == "__main__":
+#   while game_over == False:
+#       if turn == 1:
+#         selected_column = int(input("Player 1, choose a column (0-6): ")) - 1 # takes in the answer from the player and converts it to a number
 
-while game_over == False:
-    if turn == 1:
-    selected_column = int(input("Player 1, choose a column (0-6): ")) - 1 # takes in the answer from the player and converts it to a number
+#       is_valid(selected_column)
+    
+#       moving_pieces(selected_column, 1)
 
-    is_valid(selected_column)
-   
-    moving_pieces(selected_column, 1)
+#       for row in board:
+#           print(row)
+      
+#       turn = 2
+    
+#       game_over = check_win(1) 
+      
+#       if game_over:
+#           print("Player 1 wins!")
+#           break
+      
+#   # Player 2 Input 
+#       if turn == 2:
+#         selected_column_second = int(input("Player 2, choose a column (0-6): ")) - 1 # takes in the answer from the player and converts it to a number
 
-    for row in board:
-        print(row)
-    
-    turn = 2
-  
-    game_over = check_win(1) 
-    
-    if game_over:
-        print("Player 1 wins!")
-        break
-    
-# Player 2 Input 
-  if turn == 2:
-    selected_column_second = int(input("Player 2, choose a column (0-6): ")) - 1
+#       is_valid(selected_column_second)
+      
+#       moving_pieces(selected_column_second, 2)
 
-    is_valid(selected_column_second)
-    
-    moving_pieces(selected_column_second, 2)
+#       for row in board:
+#           print(row)
 
-    for row in board:
-        print(row)
-
-    turn = 1
-    
-    game_over = check_win(2) 
-    
-    if game_over:
-        print("Player 2 wins!")
-        break
+#       turn = 1
+      
+#       game_over = check_win(2) 
+      
+#       if game_over:
+#           print("Player 2 wins!")
+#           break
    
   
 

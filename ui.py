@@ -3,9 +3,12 @@
 from tkinter import *
 import tkinter as tk
 from tkinter import font
+from PIL import Image, ImageTk
 
 # Import the game logic module (allows access to board state and turn info)
 import importlib
+
+from connect4_logic import check_win, moving_pieces
 connect4_logic = importlib.import_module("connect4_logic")
 
 # ===== GLOBAL VARIABLES =====
@@ -81,21 +84,29 @@ canvas.pack(fill="both", expand=True)
 # Load the background image file from assets
 bg_image = tk.PhotoImage(file="assets/images/paper.png")
 
-# Display the background image on the canvas (centered)
+# Display the background image on the canvas
 image_id = canvas.create_image(0, 0, image=bg_image, anchor="center")
 
 # ===== TITLE TEXT =====
-# Create the "Connect 4" title text (positioned at top center)
+# Create the "Connect 4" title text 
 text_id = canvas.create_text(0, 0, text="Connect 4", font=("Freestyle Script", 64), fill="#292929", anchor="n")
+
+# ===== LOAD & CONVERT PIECE IMAGES =====
+# Load and convert PIL images to PhotoImage for tkinter display
+cookie = Image.open('assets/images/cookie.png')
+cookie_resized = cookie.resize((130, 130))
+player1_piece = ImageTk.PhotoImage(cookie_resized)
+
+button = Image.open('assets/images/button.png')
+button_resized = button.resize((130, 130))
+player2_piece = ImageTk.PhotoImage(button_resized)
 
 # ===== EVENT BINDINGS  =====
 # Bind the window resize event - whenever the window is resized, resize_image() is called
 canvas.bind("<Configure>", resize_image)
 
-# ===== PIECE IMAGES =====
-# Load images for player pieces from assets folder
-player1_piece = tk.PhotoImage(file="assets/images/cookie.png")  # Player 1's piece (cookie)
-player2_piece = tk.PhotoImage(file="assets/images/button.png")  # Player 2's piece (button)
+
+
 
 # ===== PIECE DRAWING FUNCTION =====
 def draw_pieces():
@@ -127,8 +138,8 @@ def draw_pieces():
 def on_canvas_click(event):
     """
     Called when the player clicks on the canvas.
-    Determines which column was clicked, finds the lowest available row,
-    and drops a piece there. Then switches to the other player's turn.
+    Fins the column clicked and places the current player's piece in the lowest available row of that column.
+    Does not allow placing pieces outside the grid and switches turns after a successful move.
     """
     # Calculate which column the click corresponds to based on x-coordinate
     col = (event.x - grid_start_x) // cell_width
@@ -137,25 +148,32 @@ def on_canvas_click(event):
     if col < 0 or col >= 7:
         return  # Ignore clicks outside the grid
     
-    # Find the lowest (highest row number) empty cell in the selected column
-    # Start from row 5 (bottom) and go backwards to row 0 (top)
-    for row in range(5, -1, -1):
-        if connect4_logic.board[row][col] == 0:  # Found an empty spot
-            # Place the current player's piece (1 or 2)
-            connect4_logic.board[row][col] = connect4_logic.turn
-            
-            # Switch to the other player's turn
-            if connect4_logic.turn == 1:
-                connect4_logic.turn = 2
-            else:
-                connect4_logic.turn = 1
-            
-            # Redraw the board to show the newly placed piece
-            draw_pieces()
-            break  # Stop searching after placing the piece
+    # Try to place the piece into the chosen column via game logic (lowest empty row)
+    placed = moving_pieces(col, connect4_logic.turn)
+    if not placed:
+        return  # column full; ignore click
+
+    # Redraw the board to show the newly placed piece
+    draw_pieces()
+
+    # Switch to the other player's turn only after a valid move
+    if connect4_logic.turn == 1:
+        connect4_logic.turn = 2
+    else:
+        connect4_logic.turn = 1
+
+    # Check win after the move and reset if needed 
+    #check if game is over. If it is, display a message and reset the board.
+    if(check_win(1)):
+     canvas.create_text(400, 300, text="Player 1 wins!", font=("Freestyle Script", 64), fill="#292929", anchor="center")
+     connect4_logic.board = connect4_logic.create_board()
+    elif(check_win(2)):
+     canvas.create_text(400, 300, text="Player 2 wins!", font=("Freestyle Script", 64), fill="#292929", anchor="center")
+     connect4_logic.board = connect4_logic.create_board()
 
 # Bind the mouse click event - whenever the canvas is clicked, on_canvas_click() is called
 canvas.bind("<Button-1>", on_canvas_click)
+
 
 # ===== START THE GAME =====
 # Begin the main event loop (keeps the window open and responsive to user input)
