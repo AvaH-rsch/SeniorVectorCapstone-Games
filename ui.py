@@ -19,6 +19,9 @@ grid_start_y = 120    # Top edge of the grid (y-coordinate, below the title text
 cell_width = 0        # Width of each cell in pixels
 cell_height = 0       # Height of each cell in pixels
 
+# Global variable for the reset button
+reset_button = None
+
 # ===== RESIZE EVENT HANDLER =====
 def resize_image(event):
     """Called whenever the window is resized. Updates all game elements to fit the new size."""
@@ -71,6 +74,36 @@ def draw_grid(width, height, grid_start_y=120):
     for row in range(1, 6):
         y = grid_start_y + row * cell_height
         canvas.create_line(grid_start_x, y, grid_start_x + grid_width, y, fill="#292929", tags="grid_line")
+
+# ===== RESET FUNCTION =====
+def reset_game():
+    """
+    Resets the game to its initial state.
+    Clears the board, resets the turn to player 1, and removes any win messages and reset button.
+    """
+    global reset_button
+    # Reset the board
+    connect4_logic.board = connect4_logic.create_board()
+    # Reset turn to player 1
+    connect4_logic.turn = 1
+    # Clear any win messages from the canvas
+    canvas.delete("win_message")
+    # Remove the reset button if it exists
+    if reset_button is not None:
+        try:
+            reset_button.destroy()
+        except:
+            pass  # Button might already be destroyed
+        reset_button = None
+    # Also try to destroy any remaining reset buttons that might exist
+    for widget in root.winfo_children():
+        if isinstance(widget, tk.Button) and widget.cget("text") == "Reset Game":
+            try:
+                widget.destroy()
+            except:
+                pass
+    # Redraw the empty board
+    draw_pieces()
 
 # ===== WINDOW SETUP =====
 # Create the main game window
@@ -127,6 +160,7 @@ def draw_pieces():
                 x = grid_start_x + (col * cell_width) + (cell_width // 2)
                 y = grid_start_y + (row * cell_height) + (cell_height // 2)
                 
+                #TODO: make the pieces drop down into place instead of just appearing in the final position
                 # Draw Player 1's piece (board value = 1)
                 if connect4_logic.board[row][col] == 1:
                     canvas.create_image(x, y, image=player1_piece, tags="pieces")
@@ -162,14 +196,32 @@ def on_canvas_click(event):
     else:
         connect4_logic.turn = 1
 
-    # Check win after the move and reset if needed 
-    #check if game is over. If it is, display a message and reset the board.
+    # Check win after the move and display message if needed 
+    #check if game is over. If it is, display a message.
     if(check_win(1)):
-     canvas.create_text(400, 300, text="Player 1 wins!", font=("Freestyle Script", 64), fill="#292929", anchor="center")
-     connect4_logic.board = connect4_logic.create_board()
+        canvas.create_text(400, 250, text="Player 1 wins!", font=("Freestyle Script", 64), fill="#292929", anchor="center", tags="win_message")
+        # Remove any existing reset buttons first
+        for widget in root.winfo_children():
+            if isinstance(widget, tk.Button) and widget.cget("text") == "Reset Game":
+                try:
+                    widget.destroy()
+                except:
+                    pass
+        # Create reset button in the middle of the screen below the win message
+        reset_button = tk.Button(root, text="Reset Game", command=reset_game, font=("Freestyle Script", 16), bg="#f0f0f0", fg="#292929")
+        reset_button.place(relx=0.5, rely=0.6, anchor="center")
     elif(check_win(2)):
-     canvas.create_text(400, 300, text="Player 2 wins!", font=("Freestyle Script", 64), fill="#292929", anchor="center")
-     connect4_logic.board = connect4_logic.create_board()
+        canvas.create_text(400, 250, text="Player 2 wins!", font=("Freestyle Script", 64), fill="#292929", anchor="center", tags="win_message")
+        # Remove any existing reset buttons first
+        for widget in root.winfo_children():
+            if isinstance(widget, tk.Button) and widget.cget("text") == "Reset Game":
+                try:
+                    widget.destroy()
+                except:
+                    pass
+        # Create reset button in the middle of the screen below the win message
+        reset_button = tk.Button(root, text="Reset Game", command=reset_game, font=("Freestyle Script", 16), bg="#f0f0f0", fg="#292929")
+        reset_button.place(relx=0.5, rely=0.6, anchor="center")
 
 # Bind the mouse click event - whenever the canvas is clicked, on_canvas_click() is called
 canvas.bind("<Button-1>", on_canvas_click)
