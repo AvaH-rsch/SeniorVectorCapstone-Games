@@ -18,6 +18,8 @@ grid_start_x = 0      # Left edge of the grid (x-coordinate)
 grid_start_y = 120    # Top edge of the grid (y-coordinate, below the title text)
 cell_width = 0        # Width of each cell in pixels
 cell_height = 0       # Height of each cell in pixels
+center_x=0          # Center x-coordinate of the canvas (used for centering elements)
+center_y=0          # Center y-coordinate of the canvas (used for centering elements)
 
 # Global variable for the reset button
 reset_button = None
@@ -134,6 +136,8 @@ button = Image.open('assets/images/button.png')
 button_resized = button.resize((130, 130))
 player2_piece = ImageTk.PhotoImage(button_resized)
 
+
+
 # ===== EVENT BINDINGS  =====
 # Bind the window resize event - whenever the window is resized, resize_image() is called
 canvas.bind("<Configure>", resize_image)
@@ -199,7 +203,28 @@ def on_canvas_click(event):
     # Check win after the move and display message if needed 
     #check if game is over. If it is, display a message.
     if(check_win(1)):
-        canvas.create_text(400, 250, text="Player 1 wins!", font=("Freestyle Script", 64), fill="#292929", anchor="center", tags="win_message")
+        # Get canvas dimensions for centering
+        width = canvas.winfo_width()
+        height = canvas.winfo_height()
+        
+        # Define rectangle dimensions
+        rect_width = 400
+        rect_height = 100
+        
+        # Calculate rectangle position (centered)
+        rect_x1 = (width - rect_width) // 2
+        rect_y1 = (height - rect_height) // 2
+        rect_x2 = rect_x1 + rect_width
+        rect_y2 = rect_y1 + rect_height
+        
+        # Draw centered rectangle background
+        canvas.create_rectangle(rect_x1, rect_y1, rect_x2, rect_y2, fill="white", outline="#292929", width=3, tags="win_message")
+        
+        # Draw win text centered in the rectangle
+        text_x = width // 2
+        text_y = height // 2
+        canvas.create_text(text_x, text_y, text="Player 1 wins!", font=("Freestyle Script", 48), fill="#292929", anchor="center", tags="win_message")
+        
         # Remove any existing reset buttons first
         for widget in root.winfo_children():
             if isinstance(widget, tk.Button) and widget.cget("text") == "Reset Game":
@@ -207,11 +232,32 @@ def on_canvas_click(event):
                     widget.destroy()
                 except:
                     pass
-        # Create reset button in the middle of the screen below the win message
+        # Create reset button below the rectangle
         reset_button = tk.Button(root, text="Reset Game", command=reset_game, font=("Freestyle Script", 16), bg="#f0f0f0", fg="#292929")
-        reset_button.place(relx=0.5, rely=0.6, anchor="center")
+        reset_button.place(relx=0.5, rely=0.7, anchor="center")
     elif(check_win(2)):
-        canvas.create_text(400, 250, text="Player 2 wins!", font=("Freestyle Script", 64), fill="#292929", anchor="center", tags="win_message")
+        # Get canvas dimensions for centering
+        width = canvas.winfo_width()
+        height = canvas.winfo_height()
+        
+        # Define rectangle dimensions
+        rect_width = 400
+        rect_height = 100
+        
+        # Calculate rectangle position (centered)
+        rect_x1 = (width - rect_width) // 2
+        rect_y1 = (height - rect_height) // 2
+        rect_x2 = rect_x1 + rect_width
+        rect_y2 = rect_y1 + rect_height
+        
+        # Draw centered rectangle background
+        canvas.create_rectangle(rect_x1, rect_y1, rect_x2, rect_y2, fill="white", outline="#292929", width=3, tags="win_message")
+        
+        # Draw win text centered in the rectangle
+        text_x = width // 2
+        text_y = height // 2
+        canvas.create_text(text_x, text_y, text="Player 2 wins!", font=("Freestyle Script", 48), fill="#292929", anchor="center", tags="win_message")
+        
         # Remove any existing reset buttons first
         for widget in root.winfo_children():
             if isinstance(widget, tk.Button) and widget.cget("text") == "Reset Game":
@@ -219,9 +265,9 @@ def on_canvas_click(event):
                     widget.destroy()
                 except:
                     pass
-        # Create reset button in the middle of the screen below the win message
+        # Create reset button below the rectangle
         reset_button = tk.Button(root, text="Reset Game", command=reset_game, font=("Freestyle Script", 16), bg="#f0f0f0", fg="#292929")
-        reset_button.place(relx=0.5, rely=0.6, anchor="center")
+        reset_button.place(relx=0.5, rely=0.7, anchor="center")
 
 # Bind the mouse click event - whenever the canvas is clicked, on_canvas_click() is called
 canvas.bind("<Button-1>", on_canvas_click)
