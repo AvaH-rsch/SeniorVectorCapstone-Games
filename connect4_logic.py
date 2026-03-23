@@ -40,7 +40,8 @@ def moving_pieces(colums, player) :
    for row in range(row_count - 1, -1, -1):   # go through each row
       if board[row][colums] == 0:     # check if the value is 0
           board[row][colums] = player      # replace it with 1
-          break 
+          return True 
+   return False  
       
 # Fuction that checks if the game has been won
 def check_win(player):
@@ -85,65 +86,3 @@ def check_win(player):
    else:
       return False
 
-# ============================
-#      Game Dynamics 
-# ============================
-
-while game_over == False:
-
-# ====================
-#      Player 1
-# ====================
-
-  if turn == 1:
-
-    # takes in the answer from the player and converts it to a number
-    selected_column = int(input("Player 1, choose a column (0-6): ")) - 1 
-
-    is_valid_existing_column(selected_column)
-    print(is_valid_filled__column(selected_column))
-
-
-   # Placing the piece on the board
-    moving_pieces(selected_column, 1)
-
-    for row in board:
-        print(row)
-    
-    turn = 2
-
-    game_over = check_win(1) 
-    
-    if game_over:
-        print("Player 1 wins!")
-        break
-    
-# ====================
-#      Player 2
-# ====================
-
-  if turn == 2:
-
-    # takes in the answer from the player and converts it to a number
-    selected_column_second = int(input("Player 2, choose a column (0-6): ")) - 1
-
-    is_valid_filled__column(selected_column_second)
-    is_valid_existing_column(selected_column_second)
-    
-    # Placing the piece on the board
-    moving_pieces(selected_column_second, 2)
-
-    for row in board:
-        print(row)
-
-    turn = 1
-    
-    game_over = check_win(2) 
-    
-    if game_over:
-        print("Player 2 wins!")
-        break
-   
-  
-
- 
